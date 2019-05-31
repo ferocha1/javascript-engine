@@ -1,4 +1,3 @@
-//classe para input do mouse
 class MouseInput {
 	
 	static x = 400;
@@ -12,7 +11,6 @@ class MouseInput {
 		MouseInput.y = evt.clientY - rect.top - root.scrollTop;
 	}
 }
-//classe para input do teclado
 class KeyboardInput{
 	static updateKeyboard(evt){
 		/*seta esquerda*/

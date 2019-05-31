@@ -4,18 +4,17 @@ class World {
 	static canvasContext;
 
 	constructor() {
-		//variáveis de loop do jogo
+		//variables for the mainLoop
 		this.delta = 0;
 		this.lastFrameTimeMs = 0;
 		this.timeStep = 1000/60;
 		
-		//crie as entidades do jogo aqui
-		//exemplo de declaração
-		this.entidades = new Entities();
-		
-		//lista de entidades
-		//exemplo para preencher
-		this.entities = [this.entidades];
+		//game entities
+		this.ball = new Ball(400,300,0.1,0.1,10,'white'); 
+		this.paddle = new Paddle(400,100,10,60);
+		this.bricks = new Bricks(80,60,2,10,3);
+		//game entities list
+		this.entities = [this.ball, this.paddle, this.bricks];
 	}
 	
 	init() {
@@ -23,11 +22,11 @@ class World {
 		World.canvasContext = World.canvas.getContext('2d');
 		
 		requestAnimationFrame(this.mainLoop.bind(this));
-		//declaração dos observers de input
+
 		World.canvas.addEventListener('mousemove', MouseInput.updateMousePos);
 		World.canvas.addEventListener('keydown', KeyboardInput.updateKeyboard);
 	}
-    //game loop
+
 	mainLoop(timeStamp) {
 		if(timeStamp < this.lastFrameTimeMs + this.timeStep) {
 			requestAnimationFrame(this.mainLoop.bind(this));
@@ -42,18 +41,23 @@ class World {
 		this.drawEverything();
 		requestAnimationFrame(this.mainLoop.bind(this));
 	}
-	//função que percorrera a lista de entidades e irá move-las
+	
 	moveEverything(deltaTime) {	
 		for (var i=0; i < this.entities.length; i++)
 			this.entities[i].move(deltaTime);
+
+		this.ball.paddleCollision(this.paddle);
+		this.ball.ballBrickHandling(this.delta, this.bricks);
 	}
-	//função que percorrera a lista de entidades e irá desenhá-las
+
 	drawEverything() {
-		//função que limpa a tela
 		Utils.clearScreen();
 
 		for (var i=0; i < this.entities.length; i++)
 			this.entities[i].draw();
+
+		if(this.bricks.brickGrid.find(brickgrid => brickgrid == true) == undefined)
+			Utils.colorText('Arial', 'ganhou', 400, 300,'white');
 	}
 
 	
